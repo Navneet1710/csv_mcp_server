@@ -2,95 +2,92 @@
 
 ## Why This Matters
 
-If you've ever tried to analyze CSV data in Claude.ai, you've probably hit a wall.
-You couldn't just hand it a file — instead, you had to:
+If you've ever tried to analyze CSV files in Claude.ai, you know the pain — it can't read your files directly. You end up:
 
-- Copy and paste CSV snippets (often hitting text limits)
-- Upload files elsewhere to summarize or filter
-- Explain what's inside the file manually
+- Copying and pasting CSV snippets (and hitting character limits)
+- Uploading your data to other tools
+- Manually describing what's inside your CSV
 
-That's inefficient, error-prone, and breaks your workflow.
+That's time-consuming and breaks your workflow.
 
 ## Enter the CSV MCP Server
 
-This tool connects Claude directly to your local CSV files, so it can explore, query, and summarize your data — all from within the chat.
+This lightweight connector lets Claude directly access and analyze your local CSV files — privately, efficiently, and in real time.
 
-With it, you can say things like:
+With it, you can simply say:
 
 **"Claude, show me all customers from New York with purchases over $1000,"**
 
-and it just works.
+and Claude will query your actual file.
 
 ## What This Server Does
 
 Once connected, Claude can:
 
-✅ See and list the CSV files in your local directory
+✅ List your local CSV files
 
-✅ Understand their structure (columns, datatypes, preview rows)
+✅ Preview structure and sample data
 
 ✅ Run queries using natural language or Pandas syntax
 
-✅ Generate summaries (mean, median, counts, etc.) for any column
+✅ Generate quick summaries (mean, median, count, etc.)
 
-✅ Handle large files efficiently — all without sending your data online
+✅ Handle large datasets — all without sending data online
 
-Your data stays on your machine. Claude just talks to this local server through the Model Context Protocol (MCP).
+Everything runs locally — your files never leave your system.
 
 ## Why It's Different
 
-Unlike cloud-based CSV tools, this one is:
-
-- **Local-first & private** — nothing leaves your system
-- **Fast** — built with FastMCP
-- **Flexible** — you can extend it to support Excel, TSV, or other formats
-- **Seamlessly integrated** — Claude becomes your data analyst
+- **Local-first & private**: your data stays on your device
+- **Fast**: built using FastMCP
+- **Extendable**: easily add Excel, TSV, or custom logic
+- **Seamless**: Claude becomes your personal data assistant
 
 ## Quick Start
 
 ### Requirements
 
-- Python 3.11+
+- Python 3.11 or higher
 - Claude Desktop app
-- [uv](https://docs.astral.sh/uv/) (recommended) or pip
+- [uv](https://docs.astral.sh/uv/) (recommended package manager)
 
-### 1. Install
-
-Clone and enter the repo:
+### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/Navneet1710/csv_mcp_server.git
 cd csv_mcp_server
+uv init .
 ```
 
-Install dependencies:
+### 2. Install Dependencies
 
-Using uv (recommended):
+Using uv, add the required packages:
 ```bash
-uv sync
+uv add fastmcp
+uv add pandas
 ```
 
-Or using pip:
-```bash
-pip install -r requirements.txt
-```
+### 3. Set Your CSV Directory
 
-### 2. Set Your CSV Directory
-
-In `main.py`, edit line 14:
+Open `main.py` and edit line 14 to match where your CSV files are stored:
 ```python
-CSV_DIRECTORY = Path.home() / "Documents" / "csv_files"
+CSV_DIRECTORY = Path.home() / "Documents" / "csv_files"  # customize this if needed
 ```
 
-You can point this to any folder where you keep your CSV files.
+### 4. Run the Server
 
-### 3. Run the Server
+Start the MCP server with:
 ```bash
-python main.py
+uv run main.py
 ```
 
-## Connecting to Claude
+For development or inspection mode (to see tools, logs, and capabilities):
+```bash
+uv run fastmcp dev main.py
+```
 
-Open your Claude Desktop configuration file:
+## Connecting to Claude Desktop
+
+Open your Claude configuration file:
 
 | OS | Path |
 |---|---|
@@ -98,14 +95,18 @@ Open your Claude Desktop configuration file:
 | macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | Linux | `~/.config/Claude/claude_desktop_config.json` |
 
-Add the MCP server entry:
+Add this MCP server entry:
 ```json
 {
   "mcpServers": {
     "csv-analyzer": {
-      "command": "python",
-      "args": ["C:\\path\\to\\csv_mcp_server\\main.py"],
-      "env": {}
+      "command": "C:/Users/NAVNEET GUGLANI/.local/bin/uv.exe",
+      "args": [
+        "--directory",
+        "C:\\csv_mcp_server",
+        "run",
+        "main.py"
+      ]
     }
   }
 }
@@ -113,24 +114,24 @@ Add the MCP server entry:
 
 Save and restart Claude Desktop.
 
-## How to Use It
+## Using It Inside Claude
 
-Once running, try these prompts inside Claude:
+Once connected, try commands like:
 
-### List available files
-*"What CSV files can you see?"*
+### List all CSVs
+*"What CSV files are available?"*
 
-### Preview data structure
-*"Show me the structure of sales_data.csv."*
+### Preview a file
+*"Show me the first few rows of sales_data.csv."*
 
-### Run filters
-*"From customer_data.csv, list all customers in California with orders above $500."*
+### Run queries
+*"From customer_data.csv, show all entries where purchase > 500."*
 
-### Get stats
-*"Summarize the 'revenue' column in quarterly_report.csv."*
+### Summarize data
+*"Give me the average revenue in financial_report.csv."*
 
-### Do analysis
-*"Find the correlation between age and satisfaction in survey_results.csv."*
+### Analyze relationships
+*"Find the correlation between 'age' and 'satisfaction_score' in survey_results.csv."*
 
 ## Tools and Resources
 
@@ -143,9 +144,9 @@ Once running, try these prompts inside Claude:
 | Tool | `query_csv(filename, query)` | Filter data using Pandas query syntax |
 | Tool | `get_csv_statistics(filename, column)` | Compute descriptive statistics |
 
-## Directory Layout
+## Default Folder Structure
 
-By default, your files go in:
+By default, CSV files live in:
 
 ```
 Documents/
@@ -158,14 +159,9 @@ Documents/
 
 ## Customization
 
-### Change folder:
-Edit `CSV_DIRECTORY` in `main.py`.
-
-### Add formats:
-Extend file-reading functions to handle Excel, TSV, etc.
-
-### Create new tools:
-Add more `@mcp.tool()` functions for custom queries or analysis.
+- **Change CSV directory** → edit `CSV_DIRECTORY` in `main.py`
+- **Add support for Excel/TSV** → update the file-reading logic
+- **Create your own tools** → add new `@mcp.tool()` functions for custom analysis
 
 ## Troubleshooting
 
@@ -176,47 +172,43 @@ mkdir -p ~/Documents/csv_files
 ```
 
 ### "File not found"
-→ Check filename and ensure it's in the correct directory.
+→ Check spelling and ensure the file is inside your configured directory.
 
 ### Claude doesn't detect the server
-→ Restart Claude Desktop, confirm config path and Python installation.
+→ Restart Claude Desktop and confirm the config file path.
 
 ### Permission issues
-→ Verify Claude can access your folder (or run as admin on Windows).
+→ Ensure Claude has read access to the directory (run as admin on Windows if needed).
 
 ### Debugging
 Run directly:
 ```bash
-python main.py
+uv run main.py
 ```
 
 ## Contributing
 
-Want to improve this?
+Got an idea or improvement? Contributions are welcome!
 
-1. Fork the repo
-2. Create a new branch
+1. Fork this repo
+2. Create a feature branch
 3. Add your changes
-4. Open a pull request
-
-Feedback and ideas are welcome!
+4. Submit a pull request
 
 ## License
 
-Open-source and free to use, modify, or share.
+Open source — use, modify, and share freely.
 
 ## Built With
 
-- [FastMCP](https://github.com/jlowin/fastmcp) — for efficient MCP server performance
-- [pandas](https://pandas.pydata.org/) — for data analysis
-- [Anthropic MCP](https://modelcontextprotocol.io/) — for integrating Claude with local data
+- [FastMCP](https://github.com/jlowin/fastmcp) — for fast, local MCP integration
+- [pandas](https://pandas.pydata.org/) — for data manipulation and statistics
+- [Anthropic's MCP](https://modelcontextprotocol.io/) — for connecting Claude to your environment
 
 ---
 
-## Ready to Make Claude Your Personal Data Analyst?
+## Turn Claude Into Your Personal Data Analyst
 
-Set it up once — and from then on, you can chat with your CSVs just like you talk to Claude.
+Set this up once — and from then on, you can explore and analyze your CSVs right inside Claude.
 
-**No uploads, no manual parsing, no limits.**
-
-Run it locally. Keep your data private. Get instant insights.
+**No uploads, no scripts, no hassle. Just talk to your data.**
