@@ -97,14 +97,14 @@ Open your Claude configuration file:
 
 Add this MCP server entry:
 ```json
-{
-  "mcpServers": {
-    "csv-analyzer": {
-      "command": "python",
-      "args": ["C:\\path\\to\\csv_mcp_server\\main.py"],
-      "env": {}
-    }
-  }
+"csv-analyzer": {
+      "command": uv,
+      "args": [
+        "--directory",
+        "path\\to\\csv_mcp_server",
+        "run",
+        "main.py"
+      ]
 }
 ```
 
