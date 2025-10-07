@@ -100,13 +100,9 @@ Add this MCP server entry:
 {
   "mcpServers": {
     "csv-analyzer": {
-      "command": "C:/Users/NAVNEET GUGLANI/.local/bin/uv.exe",
-      "args": [
-        "--directory",
-        "C:\\csv_mcp_server",
-        "run",
-        "main.py"
-      ]
+      "command": "python",
+      "args": ["C:\\path\\to\\csv_mcp_server\\main.py"],
+      "env": {}
     }
   }
 }
@@ -211,4 +207,6 @@ Open source — use, modify, and share freely.
 
 Set this up once — and from then on, you can explore and analyze your CSVs right inside Claude.
 
-**No uploads, no scripts, no hassle. Just talk to your data.**
+**No uploads, no manual parsing, no limits.**
+
+Run it locally. Keep your data private. Get instant insights.
