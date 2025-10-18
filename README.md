@@ -210,3 +210,6 @@ Set this up once — and from then on, you can explore and analyze your CSVs rig
 **No uploads, no manual parsing, no limits.**
 
 Run it locally. Keep your data private. Get instant insights.
+
+**Make sure you don't forget to star the repo**
+
